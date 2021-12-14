@@ -1,4 +1,4 @@
-![https://miro.medium.com/max/1400/1*emPDLzTy0oW5BWLuxDSbKQ.png](catchy image of optimization landscape)
+![catchy image of op](https://miro.medium.com/max/1400/1*emPDLzTy0oW5BWLuxDSbKQ.png)
 
 ## AdamW optimizer for bfloat16 models in pytorch.
 
