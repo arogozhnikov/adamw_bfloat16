@@ -8,7 +8,8 @@
 However, neither AMP in pytorch is ready for bfloat16, nor optimizers.
 
 If you just convert all weights and inputs to bfloat16, you're likely to run into an **issue of stale weights**:
-updates are too small to modify bfloat16 weight (see gopher's paper for an example).
+updates are too small to modify bfloat16 weight 
+(see [gopher paper](https://storage.googleapis.com/deepmind-media/research/language-research/Training%20Gopher.pdf), section C2 for a large-scale example).
 
 There are two possible remedies: 
 
