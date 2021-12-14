@@ -20,4 +20,23 @@ As [recent study](https://arxiv.org/abs/2010.06192) has shown,
 both options are completely competitive in quality to float32 training.
 
 
+# Usage
 
+Install:
+
+```bash
+pip install git+https://github.com/myuser/foo.git@v123
+```
+
+Use as a drop-in replacement for pytorch's AdamW:
+```python
+import torch
+from adamw_bfloat16 import LR, AdamW_BF16
+model = model.to(torch.bfloat16)
+
+# default preheat and decay
+optimizer = AdamW_BF16(model.parameters())
+
+# configure LR schedule. Use built-in scheduling opportunity
+optimizer = AdamW_BF16(model.parameters(), lr_function=LR(lr=1e-4, preheat_steps=5000, decay_power=-0.25))
+```
