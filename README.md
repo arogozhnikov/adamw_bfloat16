@@ -27,7 +27,7 @@ both options are completely competitive in quality to float32 training.
 Install:
 
 ```bash
-pip install git+https://github.com/myuser/foo.git@v123
+pip install git+https://github.com/arogozhnikov/adamw_bfloat16.git
 ```
 
 Use as a drop-in replacement for pytorch's AdamW:
