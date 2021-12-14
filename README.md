@@ -1,6 +1,6 @@
 ![catchy image of op](https://miro.medium.com/max/1400/1*emPDLzTy0oW5BWLuxDSbKQ.png)
 
-[<sub>Image credits</sub>](https://medium.com/analytics-vidhya/optimization-acb996a4623c)
+[<sub>Image source</sub>](https://medium.com/analytics-vidhya/optimization-acb996a4623c)
 
 ## AdamW optimizer for bfloat16 models in pytorch.
 
