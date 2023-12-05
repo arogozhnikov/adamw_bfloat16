@@ -59,5 +59,6 @@ This optimizer simplifies the code by removing:
 - grad scaler
 - amp/autocast
 - you can just forget about float32 computations
+- lr scheduler (also no need to `.step()` scheduler)
 
 Uses ~25% less memory per parameter compared to built-in AdamW.
