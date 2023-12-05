@@ -1,6 +1,6 @@
 """
-This implementation uses torch.compile to speed up
-and should be suitable for different backends.
+This implementation uses torch.compile to speed up,
+should be suitable for different backends.
 """
 import dataclasses
 
