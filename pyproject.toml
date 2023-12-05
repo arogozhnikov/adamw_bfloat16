@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling>=1.10.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "adamw_bfloat16"
+readme = "README.md"
+requires-python = ">=3.8"
+
+keywords = []
+
+dependencies = [
+    # torch is required, but is not explicitly listed.
+    # installation-time dependency is hatch
+]
+dynamic = ["version"]
+authors = [{ name = 'Alex Rogozhnikov' }]
+
+
+[project.urls]
+Homepage = 'https://github.com/arogozhnikov/adamw_bfloat16'
+
+[tool.setuptools]
+packages = ['adamw_bfloat16']
+
+[tool.hatch.version]
+path = "adamw_bfloat16/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/.github", "/.idea", "/.pytest_cache", "/build", "/dist", "/docs"]
+
+[tool.hatch.build.targets.wheel]
+# should use packages from main section
+
+
+[tool.hatch.envs.pypi.scripts]
+# hatch run pypi:deploy_test
+deploy_test = "hatch build --clean && hatch publish -r test"
+deploy = "hatch build --clean && hatch publish"
+
+
+[tool.ruff]
+line-length = 120
+
+# this will be changed to true if there are useful auto-fixes available
+fix = true
+
+fixable = [
+    "I001", # isort-like sorting of imports
+]
+
+ignore = [
+    "E501",   # line too long
+    "E731",   # Do not assign a lambda expression
+    "C408",   # rewrite dict as literal
+    "C413",   # list around sorted
+    "C401",   # rewrite set( ) as set comprehension
+    "RUF100", # unused noqa.
+    "B905",   # `zip()` without an explicit `strict=` parameter - supported only in py3.10
+]
+
+select = [
+    "E",
+    "F",
+    "I",      # isort
+    "A001",   # variable shadows python built-in
+    "B",      # flake-bugbear, more advanced checks like non-mutable defaults
+    "RUF",    # ambiguous characters,
+    "RET501", # do not use return None if it is the only value
+    "RET502", # return None if can return anything else
+    "RET503", # return None if can return anything else
+    "W605",   # invalid escape sequence
+    "C4",     # flake8-comprehensions
+]
+
+exclude = [".git", "__pycache__", ".venv", '.vscode', '.pytest_cache']
+
+[tool.ruff.isort]
+known-first-party = ["adamw_bfloat16"]
