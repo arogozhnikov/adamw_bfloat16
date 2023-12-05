@@ -3,6 +3,8 @@ import dataclasses
 import torch
 from torch.optim.optimizer import Optimizer
 
+__version__ = "0.2.0"
+
 
 @dataclasses.dataclass
 class LR:
@@ -14,7 +16,7 @@ class LR:
         # nb input is torch tensor, and all operations should be torch!
         # no if/else, no built-in min/max, etc.
         x = (step + 1) / self.preheat_steps
-        return torch.minimum(x, x ** self.decay_power) * self.lr
+        return torch.minimum(x, x**self.decay_power) * self.lr
 
 
 class AdamW_BF16(Optimizer):
@@ -43,43 +45,43 @@ class AdamW_BF16(Optimizer):
 
     @torch.no_grad()
     def step(self):
-        """Performs a single optimization step. """
+        """Performs a single optimization step."""
         for group in self.param_groups:
-            beta1, beta2 = group['betas']
+            beta1, beta2 = group["betas"]
 
-            for p in group['params']:
+            for p in group["params"]:
                 if p.grad is not None:
                     state = self.state[p]
                     # Lazy state initialization
                     if len(state) == 0:
-                        assert p.dtype == torch.bfloat16, 'only bfloat 16 is supported'
-                        state['step'] = torch.zeros([], dtype=torch.int32)
+                        assert p.dtype == torch.bfloat16, "only bfloat 16 is supported"
+                        state["step"] = torch.zeros([], dtype=torch.int32)
                         # Exponential moving average of gradient values
-                        state['exp_avg'] = torch.zeros_like(p, memory_format=torch.preserve_format)
+                        state["exp_avg"] = torch.zeros_like(p, memory_format=torch.preserve_format)
                         # Exponential moving average of squared gradient values
-                        state['exp_avg_sq'] = torch.zeros_like(p, memory_format=torch.preserve_format)
+                        state["exp_avg_sq"] = torch.zeros_like(p, memory_format=torch.preserve_format)
                         # accumulated shift that should be added to p, but wasn't because of truncation
                         # true value is p + shift
-                        state['shift'] = torch.zeros_like(p, memory_format=torch.preserve_format)
+                        state["shift"] = torch.zeros_like(p, memory_format=torch.preserve_format)
                         # using decay at each step will work only for float32, so we just remember how much owe to decay
                         # and decay once in n iterations
                         # Each weight has its own starting point to avoid simultaneous updates in all weights
-                        state['accumulated_decay'] = torch.rand([], dtype=torch.bfloat16) * self.decay_threshold
+                        state["accumulated_decay"] = torch.rand([], dtype=torch.bfloat16) * self.decay_threshold
 
                     grad = p.grad
-                    state['exp_avg'].mul_(beta1).add_(grad, alpha=1 - beta1)
-                    state['exp_avg_sq'].mul_(beta2).addcmul_(grad, grad.conj(), value=1 - beta2)
-                    shift = state['shift']
+                    state["exp_avg"].mul_(beta1).add_(grad, alpha=1 - beta1)
+                    state["exp_avg_sq"].mul_(beta2).addcmul_(grad, grad.conj(), value=1 - beta2)
+                    shift = state["shift"]
 
                     # update the steps for each param group update
-                    state['step'] += 1
-                    denom_correction = (1 - beta2 ** state['step']) ** 0.5
+                    state["step"] += 1
+                    denom_correction = (1 - beta2 ** state["step"]) ** 0.5
 
-                    lr = group['lr_function'](state['step'])
+                    lr = group["lr_function"](state["step"])
                     shift.addcdiv_(
-                        state['exp_avg'],
-                        state['exp_avg_sq'].sqrt().add_(group['eps'], alpha=1),
-                        value=- lr * denom_correction,
+                        state["exp_avg"],
+                        state["exp_avg_sq"].sqrt().add_(group["eps"], alpha=1),
+                        value=-lr * denom_correction,
                     )
 
                     # compensated summation, better this be built-in pytorch operation
@@ -87,8 +89,8 @@ class AdamW_BF16(Optimizer):
                     p.add_(shift)
                     shift.add_(buffer.sub_(p))
 
-                    accum_decay = state['accumulated_decay']
-                    accum_decay += group['weight_decay'] * lr
+                    accum_decay = state["accumulated_decay"]
+                    accum_decay += group["weight_decay"] * lr
                     decay_this_iteration = (accum_decay > self.decay_threshold) * accum_decay
-                    state['shift'].add_(p, alpha=-decay_this_iteration)
+                    state["shift"].add_(p, alpha=-decay_this_iteration)
                     accum_decay -= decay_this_iteration
