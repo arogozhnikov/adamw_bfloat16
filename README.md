@@ -1,4 +1,4 @@
-![catchy image of op](https://miro.medium.com/max/1400/1*emPDLzTy0oW5BWLuxDSbKQ.png)
+![catchy image of optimization](https://miro.medium.com/max/1400/1*emPDLzTy0oW5BWLuxDSbKQ.png)
 
 [<sub>Image source</sub>](https://medium.com/analytics-vidhya/optimization-acb996a4623c)
 
@@ -51,7 +51,12 @@ optimizer = AdamW_BF16(model.parameters(), lr_function=LR(lr=1e-4, preheat_steps
 loss.backward()
 optimizer.step()
 optimizer.zero_grad()
+```
 
+Or you can even replace last two lines with one:
+
+```python
+optimizer.step(zero_grad=True)
 ```
 
 This optimizer simplifies the code by removing:
