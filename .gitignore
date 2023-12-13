@@ -131,3 +131,4 @@ dmypy.json
 *.egg-info
 .idea
 .ruff_cache
+notebooks
