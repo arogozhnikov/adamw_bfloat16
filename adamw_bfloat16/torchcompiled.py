@@ -55,7 +55,7 @@ class AdamW_BF16(Optimizer):
         super().__init__(params, defaults)
 
     @torch.no_grad()
-    def step(self):
+    def step(self, zero_grad: bool = False):
         """Performs a single optimization step."""
         for group in self.param_groups:
             beta1, beta2 = group["betas"]
@@ -65,7 +65,7 @@ class AdamW_BF16(Optimizer):
                     state = self.state[p]
                     # Lazy state initialization
                     if len(state) == 0:
-                        assert p.dtype == torch.bfloat16, "only bfloat 16 is supported"
+                        assert p.dtype == torch.bfloat16, "only bfloat 16 is supported."
                         state["step"] = 0.0
                         # Exponential moving average of gradient values
                         state["exp_avg"] = torch.zeros_like(p, memory_format=torch.preserve_format)
@@ -116,6 +116,7 @@ def _make_step(
     lr: float,
     eps: float,
     decay_this_iteration: float,
+    zero_grad: bool,
 ):
     exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
     exp_avg_sq.mul_(beta2).addcmul_(grad, grad.conj(), value=1 - beta2)
@@ -134,3 +135,6 @@ def _make_step(
 
     if decay_this_iteration > 0:
         shift.add_(p, alpha=-decay_this_iteration)
+
+    if zero_grad:
+        grad.zero_()
