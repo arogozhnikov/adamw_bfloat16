@@ -2,6 +2,7 @@
 This is an experimental idea, where all the work is offloaded to torch optimizer.
 Internally, fp32 replica is kept within an optimizer.
 """
+
 from typing import Tuple
 
 import torch

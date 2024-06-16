@@ -2,6 +2,7 @@
 This version is cuda-graph compatible.
 That is, ALL computations can be moved to GPU.
 """
+
 import dataclasses
 
 import torch

@@ -2,6 +2,7 @@
 This implementation uses torch.compile to speed up,
 should be suitable for different backends.
 """
+
 import dataclasses
 
 import torch
@@ -100,6 +101,7 @@ class AdamW_BF16(Optimizer):
                         lr=lr,
                         eps=group["eps"],
                         decay_this_iteration=decay_this_iteration,
+                        zero_grad=zero_grad,
                     )
 
 
